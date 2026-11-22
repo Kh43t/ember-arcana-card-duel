@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember Arcana — Duel of the Three Embers</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ TITLE SCREEN ============ -->
+  <section id="screen-title" class="screen active">
+    <div class="title-wrap">
+      <div class="title-kicker">A DUEL CARD GAME · BEST OF THREE ROUNDS</div>
+      <h1 class="game-title"><span class="ember-word">EMBER</span> <span class="arcana-word">ARCANA</span></h1>
+      <p class="tagline">Duel of the Three Embers — outwit Vex, the Hollow Sage, with fire, water and thorn.</p>
+      <div class="element-legend">
+        <div class="legend-item el-ember"><span class="legend-glyph">▲</span><b>Ember</b><span>raw damage</span></div>
+        <div class="legend-item el-tide"><span class="legend-glyph">●</span><b>Tide</b><span>heal &amp; shield</span></div>
+        <div class="legend-item el-thorn"><span class="legend-glyph">◆</span><b>Thorn</b><span>damage + guard</span></div>
+      </div>
+      <p class="resonance-note">✦ <b>Resonance:</b> play two cards of the same element in one turn and the second hits +2 harder.</p>
+      <div class="title-buttons">
+        <button id="btn-start" class="btn primary big" type="button">▶ Begin the Duel</button>
+        <button id="btn-howto" class="btn big" type="button">How to Play</button>
+      </div>
+      <p class="title-foot">30 life · mana grows each turn · first to win 2 rounds takes the match<br>
+      Keys: <b>1–7</b> play a card · <b>Enter</b> end turn · <b>M</b> mute · <b>H</b> help</p>
+      <p class="original-note">An original game — its cards, names, art and music were made for this duel alone.</p>
+    </div>
+    <div id="howto" class="howto">
+      <h2>How to Play</h2>
+      <ul>
+        <li>You are <b>Aria, the Emberwright</b>. Vex, the Hollow Sage, sits across the table.</li>
+        <li>Each turn you gain mana (1, then 2, up to 10) and draw a card. Cards cost mana to play.</li>
+        <li>Reduce Vex to 0 life to take the round. Win <b>2 rounds</b> to win the match.</li>
+        <li><b>Ember ▲</b> cards deal damage. <b>Tide ●</b> cards heal you or raise shields. <b>Thorn ◆</b> cards do both, smaller.</li>
+        <li><b>Resonance:</b> two cards of the same element in one turn — the second gains +2 damage, healing or shield.</li>
+        <li>Shields absorb damage before life does. Your deck reshuffles its discard pile when it runs out.</li>
+        <li>Watch Vex's thinking — the log says what it is planning, so you can answer it.</li>
+      </ul>
+      <button id="btn-close-howto" class="btn" type="button">Close</button>
+    </div>
+  </section>
+
+  <!-- ============ TABLE SCREEN ============ -->
+  <section id="screen-table" class="screen">
+    <header class="table-top">
+      <div class="brand">🔥 EMBER ARCANA</div>
+      <div class="round-box"><span id="round-label">Round 1 — first to 2</span><span class="pips"><span id="pip-player" title="Your rounds">○○</span> vs <span id="pip-ai" title="Vex's rounds">○○</span></span></div>
+      <button id="btn-mute" class="btn small" type="button">🔊 Sound on</button>
+    </header>
+
+    <div class="fighter ai-fighter">
+      <div id="ai-portrait" class="portrait ai">🧙</div>
+      <div class="fighter-info">
+        <div class="fighter-name">Vex, the Hollow Sage <span id="ai-shield" class="shield-badge"></span></div>
+        <div class="hp-bar"><div id="ai-hp-fill" class="hp-fill ai"></div><span id="ai-hp-text" class="hp-text">30 / 30</span></div>
+        <div class="mana-row"><div id="ai-mana" class="mana-crystals"></div><span id="ai-mana-text" class="mana-text"></span></div>
+        <div id="ai-deck-count" class="deck-count"></div>
+      </div>
+      <div id="ai-hand" class="ai-hand" aria-label="Vex's hand, face down"></div>
+      <div id="ai-thinking" class="thinking"></div>
+    </div>
+
+    <div class="midfield">
+      <div id="log" class="log"><div class="log-title">⚔ Battle Log</div><div id="log-list" class="log-list"></div></div>
+      <div class="mid-controls">
+        <div id="turn-indicator" class="turn-indicator"></div>
+        <button id="btn-end-turn" class="btn primary" type="button">End Turn ⏎</button>
+        <div class="hint">Click a card or press 1–7 to play it</div>
+      </div>
+    </div>
+
+    <div class="fighter player-fighter">
+      <div id="player-portrait" class="portrait player">🧝</div>
+      <div class="fighter-info">
+        <div class="fighter-name">Aria, the Emberwright <span id="player-shield" class="shield-badge"></span></div>
+        <div class="hp-bar"><div id="player-hp-fill" class="hp-fill player"></div><span id="player-hp-text" class="hp-text">30 / 30</span></div>
+        <div class="mana-row"><div id="player-mana" class="mana-crystals"></div><span id="player-mana-text" class="mana-text"></span></div>
+        <div id="player-deck-count" class="deck-count"></div>
+      </div>
+    </div>
+    <div id="player-hand" class="player-hand" aria-label="Your hand"></div>
+  </section>
+
+  <!-- ============ WIN SCREEN ============ -->
+  <section id="screen-win" class="screen end-screen win">
+    <div class="end-wrap">
+      <div class="end-kicker">🏆 VICTORY</div>
+      <h1>The Ember Is Yours!</h1>
+      <p class="end-text">Vex bows low. The Three Embers — flame, tide and thorn — answer to Aria now.</p>
+      <div id="win-stats" class="stats"></div>
+      <div class="title-buttons">
+        <button id="btn-again-win" class="btn primary big" type="button">↻ Duel Again (R)</button>
+        <button id="btn-title-win" class="btn big" type="button">Title Screen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOSS SCREEN ============ -->
+  <section id="screen-loss" class="screen end-screen loss">
+    <div class="end-wrap">
+      <div class="end-kicker">🥀 DEFEAT</div>
+      <h1>The Hollow Sage Prevails</h1>
+      <p class="end-text">Vex gathers the embers and fades into the dark. Your deck is still warm — try again.</p>
+      <div id="loss-stats" class="stats"></div>
+      <div class="title-buttons">
+        <button id="btn-again-loss" class="btn primary big" type="button">↻ Rematch (R)</button>
+        <button id="btn-title-loss" class="btn big" type="button">Title Screen</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="round-banner" class="round-banner"></div>
+  <div id="float-layer" class="float-layer"></div>
+</div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
