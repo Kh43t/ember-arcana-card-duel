@@ -9,7 +9,7 @@
 //
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
@@ -29,8 +29,14 @@ const DOSSIER_CAPS = {
 };
 
 function freshOutputDir(dir: string): void {
-  rmSync(dir, { recursive: true, force: true });
+  // Clear only the directory's contents, never the directory itself: in the
+  // grader the output directory is a mounted volume, and removing the mount
+  // point itself fails (its parent is not writable by the runner), which
+  // made the whole run exit 1 before anything was written.
   mkdirSync(dir, { recursive: true });
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    rmSync(join(dir, entry.name), { recursive: true, force: true });
+  }
 }
 
 function handInGame(): void {
